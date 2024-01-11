@@ -1,3 +1,22 @@
+/* FONTS */
+@font-face {
+    font-family: "peachCake";
+    src: url(font/Peach_Cake.otf) format('opentype')
+}
+
+* {
+    font-family: "peachCake";
+}
+
 body {
-    background-color: skyblue;
+    background-color: rgb(255, 255, 255);
+}
+
+h3 {
+    text-transform: uppercase;
+}
+
+a {
+    text-decoration: none;
+    color: black;
 }

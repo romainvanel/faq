@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ question.titre }}{% endblock %}
+
+{% block body %}
+    <h3 class='mb-3 fw-semibold'>Question</h3>
+    {# Question de l'utlisatueur #}
+    <ul class="list-group mb-5">
+        <li class="list-group-item">
+            <div class="d-flex flex-column">
+                <div class="mb-2">
+                    <div class="mb-0">
+                        <img>{{ question.user.avatar}}</img>
+                    </div>
+                    <div>
+                        <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ question.user.nom}}</span></small></p>
+                        <p class="mb-0"><small>Posté le : {{ question.dateCreation|date("d.m.Y")}}</small></p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="fw-bold">{{ question.titre}}</h4>
+                    <p>{{ question.contenu }}</p>
+                </div>
+            </div>
+        </li>
+    </ul>
+
+    <h3 class='mb-3 fw-semibold'>Réponses</h3>
+    {# Liste des réponses liées à la question #}
+    <ul class="list-group mb-5">
+        {% for reponse in question.reponses %}
+        <li class="list-group-item">
+            <div class="d-flex flex-column">
+                <div class="mb-2">
+                    <div class="mb-0">
+                        <img>{{ reponse.user.avatar}}</img>
+                    </div>
+                    <div>
+                        <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ reponse.user.nom}}</span></small></p>
+                        <p class="mb-0"><small>Posté le : {{ reponse.dateCreation|date("d.m.Y")}}</small></p>
+                    </div>
+                </div>
+                <div>            
+                    {% if (question.user.nom == reponse.user.nom) %} 
+                        <h5 class="text-danger fw-bold">Message de l'auteur</h5>
+                        <p class="text-danger">{{ reponse.contenu }}</p>
+                    {% else %}
+                        <p>{{ reponse.contenu }}</p>                     
+                    {% endif %}
+                </div>             
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ path('app_home') }}" class="btn btn-primary">Retour aux questions</a>
+    </div>
+{% endblock %}
