@@ -38,6 +38,7 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('avatarFile', FileType::class, [
                 'label' => 'Photo de profil',
+                'mapped' => false,
                 'required' => false, 
                 'help' => 'Votre photo de profil doit être un type : PNG, WEBP ou JPEG et ne doit pas dépasser les 1M ',
                 'constraints' => [
