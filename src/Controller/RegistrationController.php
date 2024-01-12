@@ -53,13 +53,13 @@ class RegistrationController extends AbstractController
 
             // Upload si existant
             if ($avatarFile) {
+
                 // Récupère le nom du fichier
                 $originalFileName = pathinfo($avatarFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $extensionFileName = pathinfo($avatarFile->getClientOriginalName(), PATHINFO_EXTENSION);
                 // Sluggify le nom
                 $safeFileName = $slugger->slug($originalFileName);
                 // Donne nom unique au fichier
-                $newFileName = $safeFileName.'-'.uniqid().'.'.$extensionFileName;
+                $newFileName = $safeFileName.'-'.uniqid().'.'.$avatarFile->guessExtension();
 
                 // Envoie le fichier vers le dossier imgs/avatar
                 $avatarFile->move('avatars', $newFileName);
