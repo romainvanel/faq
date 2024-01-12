@@ -22,7 +22,7 @@ class HomeController extends AbstractController
     }
 
     /**
-     * Récupère toutes les questions et les ordre par date décroissante
+     * Accueil - Récupère toutes les questions et les ordre par date décroissante
      */
     #[Route('/', name: 'app_home')]
     public function index(): Response
@@ -39,12 +39,12 @@ class HomeController extends AbstractController
     }
 
     /**
-     * Récupère une seul question à l'aide de son id
+     * Récupère une seul question et toutes ses réponses
      */
-    #[Route('/question/{id}', name: 'app_one_question', requirements: ['id' => '\d+'])]
-    public function getOneQuestion(Question $question): Response
+    #[Route('/question/{id}', name: 'app_question_reponses', requirements: ['id' => '\d+'])]
+    public function getQuestionReponses(Question $question): Response
     {
-        return $this->render('home/question.html.twig', [
+        return $this->render('question/questionReponses.html.twig', [
             'question' => $question
         ]);
     }

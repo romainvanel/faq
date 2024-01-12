@@ -30,6 +30,7 @@ class Question
     private ?User $user = null;
 
     #[ORM\OneToMany(mappedBy: 'question', targetEntity: Reponse::class, orphanRemoval: true)]
+    #[ORM\OrderBy(['dateCreation' => 'ASC'])]
     private Collection $reponses;
 
     public function __construct()

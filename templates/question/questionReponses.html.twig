@@ -8,9 +8,9 @@
     <ul class="list-group mb-5">
         <li class="list-group-item">
             <div class="d-flex flex-column">
-                <div class="mb-2">
+                <div class="mb-2 d-flex align-items-center gap-4">
                     <div class="mb-0">
-                        <img>{{ question.user.avatar}}</img>
+                        <img src="{{ asset(question.user.avatar) }}" alt="{{ question.user.nom }}" class="avatar">
                     </div>
                     <div>
                         <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ question.user.nom}}</span></small></p>
@@ -31,9 +31,9 @@
         {% for reponse in question.reponses %}
         <li class="list-group-item">
             <div class="d-flex flex-column">
-                <div class="mb-2">
+                <div class="mb-2 d-flex align-items-center gap-4">
                     <div class="mb-0">
-                        <img>{{ reponse.user.avatar}}</img>
+                        <img src="{{ asset(reponse.user.avatar) }}" alt="{{ reponse.user.nom }}" class="avatar">
                     </div>
                     <div>
                         <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ reponse.user.nom}}</span></small></p>
@@ -43,12 +43,15 @@
                 <div>            
                     {% if (question.user.nom == reponse.user.nom) %} 
                         <h5 class="text-danger fw-bold">Message de l'auteur</h5>
-                        <p class="text-danger">{{ reponse.contenu }}</p>
-                    {% else %}
-                        <p>{{ reponse.contenu }}</p>                     
                     {% endif %}
+                        <p class="{{ question.user.nom == reponse.user.nom  ? 'text-danger' : '' }}">{{ reponse.contenu }}</p>                 
+
                 </div>             
             </div>
+        </li>
+        {% else %}
+        <li class="list-group-item">
+            Aucune réponse pour le moment
         </li>
         {% endfor %}
     </ul>

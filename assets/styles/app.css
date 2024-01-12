@@ -1,7 +1,7 @@
 /* FONTS */
 @font-face {
     font-family: "peachCake";
-    src: url(font/Peach_Cake.otf) format('opentype')
+    src: url(font/Peach_Cake.otf) format("opentype");
 }
 
 * {
@@ -16,7 +16,17 @@ h3 {
     text-transform: uppercase;
 }
 
-a {
+.questionLink {
     text-decoration: none;
     color: black;
+}
+
+.questionLink:hover {
+    color: blue;
+}
+
+.avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
 }
