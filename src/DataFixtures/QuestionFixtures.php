@@ -28,9 +28,9 @@ class QuestionFixtures extends Fixture implements DependentFixtureInterface
             // $number = $faker->numberBetween(0, 49);
 
             $question = new Question();
-            $question->setTitre($faker->sentence);
+            $question->setTitre("{$faker->sentence} ?");
             $question->setDateCreation($faker->dateTimeBetween('-5 years', '-2 months'));
-            $question->setContenu("{$faker->paragraph} ?");
+            $question->setContenu($faker->paragraph);
             // On récupère les données User grace à la référence dans le UserFixtures
             $question->setUser($this->getReference("user-$userId"));
 

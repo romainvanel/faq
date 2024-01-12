@@ -29,6 +29,7 @@
                     </div>
                     <div>
                         <h4 class="fw-semibold"><a href="{{ path('app_question_reponses', { id: question.id }) }}" class="questionLink">{{ question.titre}}</a></h4>
+                        <p>{{ question.contenu|slice(0, 50) }}...</p>
                     </div>
                 </div>
             </li>

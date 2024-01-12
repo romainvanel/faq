@@ -49,11 +49,12 @@
                 </div>
             </div>
             <div>            
-                {% if (question.user.nom == reponse.user.nom) %} 
-                    <h5 class="text-danger fw-bold">Message de l'auteur</h5>
+                <p class="{{ question.user.nom == reponse.user.nom  ? 'text-danger' : '' }}">{{ reponse.contenu }}</p>                 
+                {% if (question.user.nom == reponse.user.nom) %}
+                    <div class="d-flex justify-content-end">
+                        <span class="badge text-bg-danger">Message de l'auteur</span>
+                    </div>
                 {% endif %}
-                    <p class="{{ question.user.nom == reponse.user.nom  ? 'text-danger' : '' }}">{{ reponse.contenu }}</p>                 
-
             </div>             
         </div>
     </li>

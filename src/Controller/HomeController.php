@@ -37,15 +37,4 @@ class HomeController extends AbstractController
             'questions' => $questions,
         ]);
     }
-
-    /**
-     * Récupère une seul question et toutes ses réponses
-     */
-    #[Route('/question/{id}', name: 'app_question_reponses', requirements: ['id' => '\d+'])]
-    public function getQuestionReponses(Question $question): Response
-    {
-        return $this->render('question/questionReponses.html.twig', [
-            'question' => $question
-        ]);
-    }
 }
