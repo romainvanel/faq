@@ -25,6 +25,7 @@ class UserFixtures extends Fixture
             $user->setPassword($this->passwordHasher->hashPassword($user, 'secret'));
             $user->setEmail($faker->unique()->email);
             $user->setNom($faker->name);
+            $user->setIsVerified($faker->boolean);
 
             // Persiste les données
             $manager->persist($user);

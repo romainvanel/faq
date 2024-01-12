@@ -4,6 +4,14 @@
 
 {% block body %}
 
+    {# Message flash #}
+    {% for messageFlash in app.flashes('success') %}
+        <div class="alert alert-success mt-3">
+            {{messageFlash}}
+        </div>
+    {% endfor %}
+
+
     <h1 class='mb-3 fw-semibold'>Bienvenue dans la FAQ</h1>
 
     <ul class="list-group">

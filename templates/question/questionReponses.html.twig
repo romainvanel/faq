@@ -3,60 +3,68 @@
 {% block title %}{{ question.titre }}{% endblock %}
 
 {% block body %}
-    <h3 class='mb-3 fw-semibold'>Question</h3>
-    {# Question de l'utlisatueur #}
-    <ul class="list-group mb-5">
-        <li class="list-group-item">
-            <div class="d-flex flex-column">
-                <div class="mb-2 d-flex align-items-center gap-4">
-                    <div class="mb-0">
-                        <img src="{{ asset(question.user.avatar) }}" alt="{{ question.user.nom }}" class="avatar">
-                    </div>
-                    <div>
-                        <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ question.user.nom}}</span></small></p>
-                        <p class="mb-0"><small>Posté le : {{ question.dateCreation|date("d.m.Y")}}</small></p>
-                    </div>
+
+{# Message flash #}
+{% for messageFlash in app.flashes('success') %}
+    <div class="alert alert-success mt-3">
+        {{messageFlash}}
+    </div>
+{% endfor %}
+
+<h3 class='mb-3 fw-semibold'>Question</h3>
+{# Question de l'utlisatueur #}
+<ul class="list-group mb-5">
+    <li class="list-group-item">
+        <div class="d-flex flex-column">
+            <div class="mb-2 d-flex align-items-center gap-4">
+                <div class="mb-0">
+                    <img src="{{ asset(question.user.avatar) }}" alt="{{ question.user.nom }}" class="avatar">
                 </div>
                 <div>
-                    <h4 class="fw-bold">{{ question.titre}}</h4>
-                    <p>{{ question.contenu }}</p>
+                    <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ question.user.nom}}</span></small></p>
+                    <p class="mb-0"><small>Posté le : {{ question.dateCreation|date("d.m.Y")}}</small></p>
                 </div>
             </div>
-        </li>
-    </ul>
-
-    <h3 class='mb-3 fw-semibold'>Réponses</h3>
-    {# Liste des réponses liées à la question #}
-    <ul class="list-group mb-5">
-        {% for reponse in question.reponses %}
-        <li class="list-group-item">
-            <div class="d-flex flex-column">
-                <div class="mb-2 d-flex align-items-center gap-4">
-                    <div class="mb-0">
-                        <img src="{{ asset(reponse.user.avatar) }}" alt="{{ reponse.user.nom }}" class="avatar">
-                    </div>
-                    <div>
-                        <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ reponse.user.nom}}</span></small></p>
-                        <p class="mb-0"><small>Posté le : {{ reponse.dateCreation|date("d.m.Y")}}</small></p>
-                    </div>
-                </div>
-                <div>            
-                    {% if (question.user.nom == reponse.user.nom) %} 
-                        <h5 class="text-danger fw-bold">Message de l'auteur</h5>
-                    {% endif %}
-                        <p class="{{ question.user.nom == reponse.user.nom  ? 'text-danger' : '' }}">{{ reponse.contenu }}</p>                 
-
-                </div>             
+            <div>
+                <h4 class="fw-bold">{{ question.titre}}</h4>
+                <p>{{ question.contenu }}</p>
             </div>
-        </li>
-        {% else %}
-        <li class="list-group-item">
-            Aucune réponse pour le moment
-        </li>
-        {% endfor %}
-    </ul>
+        </div>
+    </li>
+</ul>
 
-    <div class="d-flex justify-content-end mb-3">
-        <a href="{{ path('app_home') }}" class="btn btn-primary">Retour aux questions</a>
-    </div>
+<h3 class='mb-3 fw-semibold'>Réponses</h3>
+{# Liste des réponses liées à la question #}
+<ul class="list-group mb-5">
+    {% for reponse in question.reponses %}
+    <li class="list-group-item">
+        <div class="d-flex flex-column">
+            <div class="mb-2 d-flex align-items-center gap-4">
+                <div class="mb-0">
+                    <img src="{{ asset(reponse.user.avatar) }}" alt="{{ reponse.user.nom }}" class="avatar">
+                </div>
+                <div>
+                    <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ reponse.user.nom}}</span></small></p>
+                    <p class="mb-0"><small>Posté le : {{ reponse.dateCreation|date("d.m.Y")}}</small></p>
+                </div>
+            </div>
+            <div>            
+                {% if (question.user.nom == reponse.user.nom) %} 
+                    <h5 class="text-danger fw-bold">Message de l'auteur</h5>
+                {% endif %}
+                    <p class="{{ question.user.nom == reponse.user.nom  ? 'text-danger' : '' }}">{{ reponse.contenu }}</p>                 
+
+            </div>             
+        </div>
+    </li>
+    {% else %}
+    <li class="list-group-item">
+        Aucune réponse pour le moment
+    </li>
+    {% endfor %}
+</ul>
+
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{ path('app_home') }}" class="btn btn-primary">Retour aux questions</a>
+</div>
 {% endblock %}
