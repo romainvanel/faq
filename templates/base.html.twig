@@ -22,22 +22,33 @@
                 <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
-                {% if (app.user) %}
-                    <div class="d-flex align-items-center gap-4 me-3">
-                        <p class="m-0">{{ app.user.nom }}</p>
-                        <div>
-                            <img src="{{ asset(app.user.avatar) }}" alt="{{ app.user.nom }}" class="avatar">
-                        </div>
 
-                    </div>
+                {% if (app.user == null) %}
+                    <ul class="navbar-nav" >
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{{ path('app_login') }}">
+                                Connexion
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_register') }}">
+                                Inscription
+                            </a>
+                        </li>
+                    </ul>                
                 {% else %}
-                    <ul class="navbar-nav me-3" >
+                    <ul class="navbar-nav d-flex align-items-center gap-3">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{{ path('app_login') }}">Connexion</a>
+                            <img src="{{ asset(app.user.avatar) }}" alt="{{ app.user.nom }}" class="avatar">
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_register') }}">Inscription</a>
+                            <p class="m-0">{{ app.user.nom }}</p>
                         </li>
+                        <li class="nav-item">
+                           <a class="nav-link" href="{{ path('app_logout') }}">Deconnexion</a>
+                        </li>
+
+
                     </ul>
                 {% endif %}
                 </div>

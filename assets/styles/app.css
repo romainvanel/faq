@@ -1,12 +1,12 @@
 /* FONTS */
-@font-face {
+/* @font-face {
     font-family: "peachCake";
     src: url(font/Peach_Cake.otf) format("opentype");
 }
 
 * {
     font-family: "peachCake";
-}
+} */
 
 body {
     background-color: rgb(255, 255, 255);
