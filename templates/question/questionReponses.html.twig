@@ -4,77 +4,94 @@
 
 {% block body %}
 
-{# Message flash #}
-{% for messageFlash in app.flashes('success') %}
-    <div class="alert alert-success mt-3">
-        {{messageFlash}}
-    </div>
-{% endfor %}
-
-{# Question de l'utlisatueur #}
-<h3 class='mb-3 fw-semibold'>Question</h3>
-<ul class="list-group mb-5">
-    <li class="list-group-item">
-        <div class="d-flex flex-column">
-            <div class="mb-2 d-flex align-items-center gap-4">
-                <div class="mb-0">
-                    <img src="{{ asset(question.user.avatar) }}" alt="{{ question.user.nom }}" class="avatar">
-                </div>
-                <div>
-                    <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ question.user.nom}}</span></small></p>
-                    <p class="mb-0"><small>Posté le : {{ question.dateCreation|date("d.m.Y")}}</small></p>
-                </div>
-            </div>
-            <div>
-                <h4 class="fw-bold">{{ question.titre}}</h4>
-                <p>{{ question.contenu }}</p>
-            </div>
+    {# Message flash #}
+    {% for messageFlash in app.flashes('success') %}
+        <div class="alert alert-success mt-3">
+            {{messageFlash}}
         </div>
-    </li>
-</ul>
-
-{# Liste des réponses liées à la question #}
-<h3 class='mb-3 fw-semibold'>Réponses</h3>
-<ul class="list-group mb-5">
-    {% for reponse in question.reponses %}
-    <li class="list-group-item">
-        <div class="d-flex flex-column">
-            <div class="mb-2 d-flex align-items-center gap-4">
-                <div class="mb-0">
-                    <img src="{{ asset(reponse.user.avatar) }}" alt="{{ reponse.user.nom }}" class="avatar">
-                </div>
-                <div>
-                    <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ reponse.user.nom}}</span></small></p>
-                    <p class="mb-0"><small>Posté le : {{ reponse.dateCreation|date("d.m.Y")}}</small></p>
-                </div>
-            </div>
-            <div>            
-                <p class="{{ question.user.nom == reponse.user.nom  ? 'text-danger' : '' }}">{{ reponse.contenu }}</p>                 
-                {% if (question.user.nom == reponse.user.nom) %}
-                    <div class="d-flex justify-content-end">
-                        <span class="badge text-bg-danger">Message de l'auteur</span>
-                    </div>
-                {% endif %}
-            </div>             
-        </div>
-    </li>
-    {% else %}
-    <li class="list-group-item">
-        Aucune réponse pour le moment
-    </li>
     {% endfor %}
-</ul>
 
-{# Formulaire de réponse #}
-<h3 class='mb-3 fw-semibold'>Ecrire une réponse</h3>
-{% if app.user is null %}
-<p>Veuillez vous connecter : <a href="{{ path('app_login') }}">connexion</a> - <a href="{{ path('app_register') }}">Inscription</a></p>
-{% else %}
-{{ form(formAddReponse) }}
-{% endif %}
+    {# Question de l'utlisatueur #}
+    <h3 class='mb-3 fw-semibold'>Question</h3>
+    <ul class="list-group mb-5">
+        <li class="list-group-item">
+            <div class="d-flex flex-column">
+                <div class="mb-2 d-flex align-items-center gap-4">
+                    <div class="mb-0">
+                        <img src="{{ asset(question.user.avatar) }}" alt="{{ question.user.nom }}" class="avatar">
+                    </div>
+                    <div>
+                        <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ question.user.nom}}</span></small></p>
+                        <p class="mb-0"><small>Posté le : {{ question.dateCreation|date("d.m.Y")}}</small></p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="fw-bold">{{ question.titre}}</h4>
+                    <p>{{ question.contenu }}</p>
+                </div>
+            </div>
+        </li>
+    </ul>
 
-{# Retour à la page d'accueil #}
-<div class="d-flex justify-content-end mb-3">
-    <a href="{{ path('app_home') }}" class="btn btn-primary">Retour aux questions</a>
-</div>
+    {# Liste des réponses liées à la question #}
+    <h3 class='mb-3 fw-semibold'>Réponses</h3>
+    <ul class="list-group mb-5">
+        {% for reponse in question.reponses %}
+        <li class="list-group-item">
+            <div class="d-flex flex-column">
+                <div class="d-flex justify-content-between">
+                    <div class="mb-2 d-flex align-items-center gap-4">
+                        <div class="mb-0">
+                            <img src="{{ asset(reponse.user.avatar) }}" alt="{{ reponse.user.nom }}" class="avatar">
+                        </div>
+                        <div>
+                            <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ reponse.user.nom}}</span></small></p>
+                            <p class="mb-0"><small>
+                            Posté le : {{ reponse.dateCreation|date("d.m.Y")}}
+                            {% if reponse.dateEdition is not null %}
+                             - Modifié le : {{ reponse.dateEdition|date("d.m.Y à H:i")}}
+                            {% endif %}
+                            </small></p>
+                        </div>
+                    </div>
+                    {% if (reponse.user is same as(app.user)) %}
+                    <div>
+                        <a href="{{ path('app_reponse_edit', {id: reponse.id}) }}">
+                            <img src="{{ asset('imgs/icone/pencil-square.svg') }}" alt="Edition" title="Edition">
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+                <div>            
+                    <p class="{{ question.user.nom == reponse.user.nom  ? 'text-danger' : '' }}">{{ reponse.contenu }}</p>                 
+                    {% if (question.user.id is same as(reponse.user.id)) %}
+                        <div class="d-flex justify-content-end">
+                            <span class="badge text-bg-danger">Message de l'auteur</span>
+                        </div>
+                    {% endif %}
+                </div>             
+            </div>
+        </li>
+        {% else %}
+        <li class="list-group-item">
+            Aucune réponse pour le moment
+        </li>
+        {% endfor %}
+    </ul>
+
+    {# Formulaire de réponse #}
+    <h3 class='mb-3 fw-semibold'>Ecrire une réponse</h3>
+    {% if app.user is null %}
+        <p>Pour répondre à cette question veuillez vous <a href="{{ path('app_login') }}">connecter</a> ou vous <a href="{{ path('app_register') }}">inscrire</a></p>
+    {% else %}
+        {% include 'reponse/_formReponse.html.twig' with {
+            form: formAddReponse,
+            labelButton: 'Poster ma Réponse'
+        } %}
+    {% endif %}
+
+    {# Retour à la page d'accueil #}
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ path('app_home') }}" class="btn btn-primary">Retour aux questions</a>
+    </div>
 {% endblock %}

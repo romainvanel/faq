@@ -28,6 +28,9 @@ class Reponse
     #[ORM\JoinColumn(nullable: false)]
     private ?Question $question = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $dateEdition = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -77,6 +80,18 @@ class Reponse
     public function setQuestion(?Question $question): static
     {
         $this->question = $question;
+
+        return $this;
+    }
+
+    public function getDateEdition(): ?\DateTimeInterface
+    {
+        return $this->dateEdition;
+    }
+
+    public function setDateEdition(?\DateTimeInterface $dateEdition): static
+    {
+        $this->dateEdition = $dateEdition;
 
         return $this;
     }

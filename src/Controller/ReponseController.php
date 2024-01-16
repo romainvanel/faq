@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ReponseController extends AbstractController
 {
@@ -21,13 +22,31 @@ public function __construct(
 }
 
     /**
-     * Ajoute une nouvelle réponse
+     * Editer une réponse
      */
-    #[Route('/reponse/add', name: 'app_reponse_add')]
-    public function addReponse(Request $request): Response
+    #[IsGranted('ROLE_USER')]
+    #[Route('/reponse/{id}/edit', name: 'app_reponse_edit')]
+    public function editReponse(Request $request, Reponse $reponse): Response
     {
-        return $this->render('reponse/index.html.twig', [
-            'controller_name' => 'ReponseController',
+        $form = $this->createForm(ReponseType::class, $reponse);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $reponse->setDateEdition((new \Datetime()));
+
+            $this->entityManager->persist($reponse);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', "Votre réponse a bien été ajoutée");
+
+            return $this->redirectToRoute('app_question_reponses', [
+                'id' => $reponse->getQuestion()->getId()
+            ]);
+        }
+
+        return $this->render('/reponse/editReponse.html.twig', [
+            'formEditReponse' => $form,
         ]);
     }
 }

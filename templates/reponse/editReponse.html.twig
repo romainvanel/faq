@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editez votre réponse{% endblock %}
+
+{% block body %}
+    <h1 class="mb-3">Editez votre réponse</h1>
+
+    {% include 'reponse/_formReponse.html.twig' with {
+        form: formEditReponse,
+        labelButton: 'Editer ma Réponse'
+    } %}
+
+{% endblock %}
+
+
