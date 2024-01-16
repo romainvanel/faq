@@ -24,10 +24,19 @@ public function __construct(
     /**
      * Editer une réponse
      */
-    #[IsGranted('ROLE_USER')]
+    // Sécurisation de la réponse
+    #[Route('REPONSE_EDIT', 'reponse', "Vous ne pouvez pas éditer cette réponse")]
     #[Route('/reponse/{id}/edit', name: 'app_reponse_edit')]
     public function editReponse(Request $request, Reponse $reponse): Response
     {
+        /**
+         * Sécurisation de la page. Seul un utilisateur connecté peut modifier ses propres réponses
+         * autre méthode
+         */
+        // if (!$this->isGranted('REPONSE_EDIT', $reponse)) {
+        //     throw $this->createAccessDeniedException("Vous ne pouvez pas modifier cette réponse");
+        // }
+
         $form = $this->createForm(ReponseType::class, $reponse);
         $form->handleRequest($request);
 

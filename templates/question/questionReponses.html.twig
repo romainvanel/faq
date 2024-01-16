@@ -54,7 +54,11 @@
                             </small></p>
                         </div>
                     </div>
-                    {% if (reponse.user is same as(app.user)) %}
+                    {# Bouton pour l'édition du message #}
+                    {# 
+                        is_granted() permet de vérifier si l'utilisateur à la permission de modifier la réponse
+                     #}
+                    {% if is_granted('REPONSE_VIEW', reponse) %}
                     <div>
                         <a href="{{ path('app_reponse_edit', {id: reponse.id}) }}">
                             <img src="{{ asset('imgs/icone/pencil-square.svg') }}" alt="Edition" title="Edition">
