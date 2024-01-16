@@ -25,7 +25,7 @@ public function __construct(
      * Editer une réponse
      */
     // Sécurisation de la réponse
-    #[Route('REPONSE_EDIT', 'reponse', "Vous ne pouvez pas éditer cette réponse")]
+    #[IsGranted('REPONSE_EDIT', 'reponse', "Vous ne pouvez pas éditer cette réponse")]
     #[Route('/reponse/{id}/edit', name: 'app_reponse_edit')]
     public function editReponse(Request $request, Reponse $reponse): Response
     {

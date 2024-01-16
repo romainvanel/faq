@@ -7,9 +7,12 @@ use App\Entity\Reponse;
 use App\Form\QuestionType;
 use App\Form\ReponseType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -25,8 +28,10 @@ class QuestionController extends AbstractController
      * Récupère une seul question et toutes ses réponses et permet d'ajouter une réponse
      */
     #[Route('/question/{id}', name: 'app_question_reponses', requirements: ['id' => '\d+'])]
-    public function getQuestionReponses(Question $question, Request $request): Response
+    public function getQuestionReponses(Question $question, Request $request, MailerInterface $mailer): Response
     {
+
+        // Formulaire de réponse 
         $reponse = new Reponse();
         $form = $this->createForm(ReponseType::class, $reponse);
 
@@ -45,6 +50,19 @@ class QuestionController extends AbstractController
 
             // On clone notre objet formulaire vide dans l'objet de départ pour afficher le formulaire vide sur la page après validation
             $form = clone $emptyForm;
+
+            // Si une nouvelle réponse est ajoutée on envoie un mail de confirmation
+            $email = (new TemplatedEmail())
+            ->from(new Address('noReply@faq.com', 'FAQ'))
+            ->to($reponse->getUser()->getEmail())
+            ->subject("Une réponse à votre question vient d'être postée")
+            ->htmlTemplate('reponse/email.html.twig')
+            ->context([
+                'reponse' => $reponse
+            ])
+            ;
+
+            $mailer->send($email);
         }
 
         return $this->render('question/questionReponses.html.twig', [
