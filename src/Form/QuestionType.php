@@ -40,15 +40,13 @@ class QuestionType extends AbstractType
                 ],
                 'constraints' => [
                     new Length([
-                        'min' => 20,
-                        'minMessage' => 'Votre question doit faire plus de {{ limit }} caractères',
                         'max' => 5000,
-                        'maxMessage' => 'Votre question ne doit pas dépasser {{ limit }} caractères'
+                        'maxMessage' => 'Ce champs ne doit pas dépasser {{ limit }} caractères'
                     ])
                 ]
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Poser votre question'
+                'label' => $options['labelButton']
             ])
         ;
     }
@@ -57,6 +55,7 @@ class QuestionType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Question::class,
+            'labelButton' => 'Poser votre question'
         ]);
     }
 }

@@ -143,8 +143,18 @@ class QuestionController extends AbstractController
     #[Route('/question/{id}/edit', name: 'app_question_edit')]
     public function editQuestion(Question $question, Request $request): Response
     {
-        $form = $this->createForm(QuestionType::class, $question);
+        $form = $this->createForm(QuestionType::class, $question, [
+            'labelButton' => 'Modifier ma question'
+        ]);
         $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($question);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', "Votre question a bien été modifiée");
+
+        }
 
         return $this->render('/question/editQuestion.html.twig', [
             'formEditQuestion' => $form

@@ -60,7 +60,7 @@
                                     >
                                         <input type="hidden" name="_method" value="DELETE">
                                         <input type="hidden" name="_token" value="{{ csrf_token('question_delete') }}">
-                                        <button type="submit">
+                                        <button type="submit" class="bg-transparent border-0">
                                             <img src="{{ asset('imgs/icone/delete.svg') }}" alt="Suppression" title="Suppression">
                                         </button>
                                     </form>
@@ -71,6 +71,11 @@
                     <div>
                         <h4 class="fw-semibold"><a href="{{ path('app_question_reponses', { id: question.id }) }}" class="questionLink">{{ question.titre}}</a></h4>
                         <p>{{ question.contenu|slice(0, 50) }}...</p>
+                        {% if (question.user is same as(app.user)) %}
+                        <div class="d-flex justify-content-end">
+                            <span class="badge text-bg-danger">Votre question</span>
+                        </div>
+                    {% endif %}
                     </div>
                 </div>
             </li>

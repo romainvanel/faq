@@ -10,10 +10,11 @@ class ReponseVoter extends Voter
 {
     public const EDIT = 'REPONSE_EDIT';
     public const VIEW = 'REPONSE_VIEW';
+    public const DELETE = 'REPONSE_DELETE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::VIEW])
+        return in_array($attribute, [self::EDIT, self::VIEW, self::DELETE])
             && $subject instanceof \App\Entity\Reponse;
     }
 
@@ -27,13 +28,12 @@ class ReponseVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
+            case self::DELETE:            
+            case self::VIEW:            
             case self::EDIT:
                 /**
-                 * Si l'auteur du sujet (donc la réponse) est égal ) l'utilisateur connecté alors on autorise la modification de la réponse
+                 * Si l'auteur du sujet (donc la réponse) est égal ) l'utilisateur connecté alors on autorise la modification / suppression / vue de la réponse
                  */
-                return $subject->getUser() === $user;
-                break;
-            case self::VIEW:
                 return $subject->getUser() === $user;
                 break;
         }

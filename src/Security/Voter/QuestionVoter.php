@@ -43,8 +43,6 @@ class QuestionVoter extends Voter
                 return $this->security->isGranted('ROLE_USER');
                 break;
             case self::EDIT:
-                return $subject->getUser() === $user;
-                break;
             case self::DELETE:
                 return $subject->getUser() === $user;
                 break;

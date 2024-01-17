@@ -6,6 +6,7 @@ use App\Entity\Reponse;
 use App\Form\ReponseType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -56,6 +57,30 @@ public function __construct(
 
         return $this->render('/reponse/editReponse.html.twig', [
             'formEditReponse' => $form,
+        ]);
+    }
+
+    /**
+     * Supprimer une réponse
+     */
+    #[IsGranted('REPONSE_DELETE', 'reponse', 'Vous ne pouvez pas supprimer cette réponse')]
+    #[Route('/reponse/{id}/delete', name:'app_reponse_delete', requirements: ['id' => '\d+'])]
+    public function deleteReponse(Reponse $reponse, Request $request): RedirectResponse
+    {
+        $token = $request->request->get('_token');
+        $method = $request->request->get('_method');
+
+        if ($method === 'DELETE' && $this->isCsrfTokenValid('reponse_delete', $token)) {
+            $this->entityManager->remove($reponse);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Votre réponse à bien été supprimée');
+        } else {
+            $this->addFlash('error', "Vous ne pouvez pas supprimer cette réponse");
+        }
+
+        return $this->redirectToRoute('app_question_reponses', [
+            'id' => $reponse->getQuestion()->getId()
         ]);
     }
 }

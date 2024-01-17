@@ -10,6 +10,11 @@
             {{messageFlash}}
         </div>
     {% endfor %}
+    {% for messageFlash in app.flashes('error') %}
+        <div class="alert alert-danger mt-3">
+            {{messageFlash}}
+        </div>
+    {% endfor %}
 
     {# Question de l'utlisatueur #}
     <h3 class='mb-3 fw-semibold'>Question</h3>
@@ -54,17 +59,35 @@
                             </small></p>
                         </div>
                     </div>
-                    {# Bouton pour l'édition du message #}
-                    {# 
-                        is_granted() permet de vérifier si l'utilisateur à la permission de modifier la réponse
-                     #}
-                    {% if is_granted('REPONSE_VIEW', reponse) %}
-                    <div>
-                        <a href="{{ path('app_reponse_edit', {id: reponse.id}) }}">
-                            <img src="{{ asset('imgs/icone/edit.svg') }}" alt="Edition" title="Edition">
-                        </a>
+
+                    <div class="d-flex gap-2">
+                        {# Bouton pour l'édition du message #}
+                        {# 
+                            is_granted() permet de vérifier si l'utilisateur à la permission de modifier la réponse
+                        #}
+                        {% if is_granted('REPONSE_VIEW', reponse) %}
+                        <div>
+                            <a href="{{ path('app_reponse_edit', {id: reponse.id}) }}">
+                                <img src="{{ asset('imgs/icone/edit.svg') }}" alt="Edition" title="Edition">
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% if is_granted('REPONSE_DELETE', reponse) %}
+                            <div>
+                                <form
+                                    action="{{ path('app_reponse_delete', {id: reponse.id}) }}"
+                                    method="post"
+                                    onsubmit="return confirm('La réponse sera supprimée de manière définitive')"
+                                >
+                                    <input type="hidden" name="_method" value="DELETE">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('reponse_delete') }}">
+                                    <button type="submit" class="bg-transparent border-0">
+                                        <img src="{{ asset('imgs/icone/delete.svg') }}" alt="Suppression" title="Suppression">
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
                     </div>
-                    {% endif %}
                 </div>
                 <div>            
                     <p class="{{ question.user.nom == reponse.user.nom  ? 'text-danger' : '' }}">{{ reponse.contenu }}</p>                 
