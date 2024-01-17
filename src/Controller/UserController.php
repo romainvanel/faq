@@ -73,8 +73,8 @@ class UserController extends AbstractController
      /**
       * Supprimer un utilisateur
       */
-     #[Route('/user/profile/remove', name: 'app_user_profile_remove')]
-      public function removeUser(Request $request): RedirectResponse
+     #[Route('/user/profile/delete', name: 'app_user_profile_delete')]
+      public function deleteUser(Request $request): RedirectResponse
       {
         // Récupération du jeton CSRF du formulaire
         $token = $request->request->get('_token');

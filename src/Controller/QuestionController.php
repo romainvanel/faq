@@ -9,6 +9,7 @@ use App\Form\ReponseType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -133,5 +134,43 @@ class QuestionController extends AbstractController
         return $this->render('question/addQuestion.html.twig', [
             'formAddQuestion' => $form
         ]);
+    }
+
+    /**
+     * Edition d'une question
+     */
+    #[IsGranted('QUESTION_EDIT', 'question', "Vous ne pouvez pas éditer cette réponse")]
+    #[Route('/question/{id}/edit', name: 'app_question_edit')]
+    public function editQuestion(Question $question, Request $request): Response
+    {
+        $form = $this->createForm(QuestionType::class, $question);
+        $form->handleRequest($request);
+
+        return $this->render('/question/editQuestion.html.twig', [
+            'formEditQuestion' => $form
+        ]);
+    }
+
+    /**
+     * Suppression d'une question
+     */
+    #[IsGranted('QUESTION_DELETE', 'question', "Vous ne pouvez pas supprimer cette question")]
+    #[Route('/question/{id}/delete', name: 'app_question_delete', requirements: ['id' => '\d+'])]
+    public function deleteQuestion(Question $question, Request $request): RedirectResponse
+    {
+
+        $token = $request->request->get('_token');
+        $method = $request->request->get('_method');
+
+        if ($method === 'DELETE' && $this->isCsrfTokenValid('question_delete', $token)) {
+            $this->entityManager->remove($question);
+            $this->entityManager->flush(); 
+            
+            $this->addFlash('success', 'Votre question a bien été supprimée');
+        } else {
+            $this->addFlash('error', 'Vous ne pouvez pas supprimer cette question');
+        }
+
+        return $this->redirectToRoute('app_home');
     }
 }

@@ -10,6 +10,11 @@
             {{messageFlash}}
         </div>
     {% endfor %}
+    {% for messageFlash in app.flashes('error') %}
+        <div class="alert alert-danger mt-3">
+            {{messageFlash}}
+        </div>
+    {% endfor %}
 
 
     <h1 class='mb-3 fw-semibold'>Bienvenue dans la FAQ</h1>
@@ -28,15 +33,41 @@
         {% for question in questions %}
             <li class="list-group-item">
                 <div class="d-flex flex-column">
-                    <div class="mb-2 d-flex align-items-center gap-4">
-                        <div class="mb-0">
-                            <img src="{{ asset(question.user.avatar) }}" alt="{{ question.user.nom }}" class="avatar">
+                    <div class="d-flex justify-content-between">
+                        <div class="mb-2 d-flex align-items-center gap-4">
+                            <div class="mb-0">
+                                <img src="{{ asset(question.user.avatar) }}" alt="{{ question.user.nom }}" class="avatar">
+                            </div>
+                            <div>
+                                <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ question.user.nom }}</span></small></p>
+                                <p class="mb-0"><small>Posté le : {{ question.dateCreation|date("d.m.Y") }}</small></p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="mb-0"><small>Auteur : <span class="fw-semibold">{{ question.user.nom }}</span></small></p>
-                            <p class="mb-0"><small>Posté le : {{ question.dateCreation|date("d.m.Y") }}</small></p>
+                        <div class="d-flex gap-2">
+                            {% if is_granted('QUESTION_EDIT', question) %}
+                                <div>
+                                    <a href="{{ path('app_question_edit', {id: question.id}) }}">
+                                        <img src="{{ asset('imgs/icone/edit.svg') }}" alt="Edition" title="Edition">
+                                    </a>
+                                </div>
+                            {% endif %}
+                            {% if is_granted('QUESTION_DELETE', question) %}
+                                <div>
+                                    <form
+                                        action="{{ path('app_question_delete', {id: question.id}) }}"
+                                        method="post"
+                                        onsubmit="return confirm('La question sera supprimée de manière définitive')"
+                                    >
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('question_delete') }}">
+                                        <button type="submit">
+                                            <img src="{{ asset('imgs/icone/delete.svg') }}" alt="Suppression" title="Suppression">
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
                         </div>
-                    </div>
+                   </div>
                     <div>
                         <h4 class="fw-semibold"><a href="{{ path('app_question_reponses', { id: question.id }) }}" class="questionLink">{{ question.titre}}</a></h4>
                         <p>{{ question.contenu|slice(0, 50) }}...</p>

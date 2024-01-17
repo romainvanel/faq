@@ -10,6 +10,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class QuestionVoter extends Voter
 {
     public const ADD = 'QUESTION_ADD';
+    public const EDIT = 'QUESTION_EDIT';
+    public const DELETE = 'QUESTION_DELETE';
 
     public function __construct(
         private Security $security)
@@ -23,7 +25,7 @@ class QuestionVoter extends Voter
             return true;
         }
 
-        return in_array($attribute, [self::ADD])
+        return in_array($attribute, [self::EDIT, self::DELETE])
             && $subject instanceof \App\Entity\Question;
     }
 
@@ -39,8 +41,12 @@ class QuestionVoter extends Voter
         switch ($attribute) {
             case self::ADD:
                 return $this->security->isGranted('ROLE_USER');
-                // logic to determine if the user can EDIT
-                // return true or false
+                break;
+            case self::EDIT:
+                return $subject->getUser() === $user;
+                break;
+            case self::DELETE:
+                return $subject->getUser() === $user;
                 break;
         }
 

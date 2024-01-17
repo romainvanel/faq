@@ -43,7 +43,7 @@
     <div class="d-flex gap-5">
         <a href="{{ path('app_user_profile_edit')}}" class="btn btn-primary w-50">Editer le profil</a>
         <form 
-            action="{{ path('app_user_profile_remove') }}" 
+            action="{{ path('app_user_profile_delete') }}" 
             method="post"
             onsubmit="return confirm('Cette action supprimera votre compte de manière définitive')"
         >
