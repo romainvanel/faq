@@ -28,7 +28,7 @@ class UploadService
         // Instancie le composant Symfony Filesystem
         $filesystem = new Filesystem();
         // Si l'argument $oldFile est différent de null et que le fichier existe
-        if ($oldFile !== null && $filesystem->exists($oldFile)) {
+        if ($oldFile !== null && $oldFile !== "default.png" && $filesystem->exists($oldFile)) {
             // On supprime le nouveau nom du fichier
            $filesystem->remove($oldFile);
         }

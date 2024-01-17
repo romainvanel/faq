@@ -4,6 +4,12 @@
 
 {% block body %}
 
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+{% endfor %}
+
 <h1 class="text-center mb-5">Votre compte</h1>
 
 <div class="w-50 m-auto d-flew flex-column border rounded p-3">
@@ -36,7 +42,17 @@
     </table>
     <div class="d-flex gap-5">
         <a href="{{ path('app_user_profile_edit')}}" class="btn btn-primary w-50">Editer le profil</a>
-        <a href="" class="btn btn-danger w-50">Supprimer mon compte</a>
+        <form 
+            action="{{ path('app_user_profile_remove') }}" 
+            method="post"
+            onsubmit="return confirm('Cette action supprimera votre compte de manière définitive')"
+        >
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete_user') }}">
+            <button type="submit" class="btn btn-danger">Supprimer mon compte</button>
+
+
+        </form>
     </div> 
 </div>
 
