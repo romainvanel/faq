@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
@@ -10,7 +11,7 @@ use Symfony\Component\String\Slugger\AsciiSlugger;
  */
 class UploadService
 {
-    public function upload(UploadedFile $file): string
+    public function upload(UploadedFile $file, string $oldFile = null): string
     {
         // Récupère le nom du fichier
         $originalFileName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
@@ -23,6 +24,14 @@ class UploadService
         // Envoie le fichier vers le dossier imgs/avatar - upload
         $file->move('avatars', $newFileName);
 
+        // Supprime un ancien fichier
+        // Instancie le composant Symfony Filesystem
+        $filesystem = new Filesystem();
+        // Si l'argument $oldFile est différent de null et que le fichier existe
+        if ($oldFile !== null && $filesystem->exists($oldFile)) {
+            // On supprime le nouveau nom du fichier
+           $filesystem->remove($oldFile);
+        }
         // Retourne le nom du fichier
         return $newFileName;
     }

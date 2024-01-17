@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modification de vos informations personnelles{% endblock %}
+
+{% block body %}
+    <h1>Modification de vos informations personnelles</h1>
+
+    {{ form_start(formEditUser) }}
+        {{form_row(formEditUser.nom)}}
+        {{form_row(formEditUser.email)}}
+        {{form_row(formEditUser.avatarFile)}}
+        {{form_row(formEditUser.submit)}}
+
+    {{ form_end(formEditUser) }}
+
+{% endblock %}

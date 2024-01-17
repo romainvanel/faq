@@ -42,7 +42,7 @@
                             <img src="{{ asset(app.user.avatar) }}" alt="{{ app.user.nom }}" class="avatar">
                         </li>
                         <li class="nav-item">
-                            <p class="m-0">{{ app.user.nom }}</p>
+                            <a href="{{ path('app_user_profile') }}" class="nav-link m-0">{{ app.user.nom }}</a>
                         </li>
                         <li class="nav-item">
                            <a class="nav-link" href="{{ path('app_logout') }}">Deconnexion</a>

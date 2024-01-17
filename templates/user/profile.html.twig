@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil : {{user.nom}}{% endblock %}
+
+{% block body %}
+
+<h1 class="text-center mb-5">Votre compte</h1>
+
+<div class="w-50 m-auto d-flew flex-column border rounded p-3">
+    <h4 class="align-self-start mb-3">Profil</h4>
+    <table class="table ">
+        <tr>
+            <td>
+                Nom : 
+            </td>
+            <td>
+                {{ user.nom }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Email : 
+            </td>
+            <td>
+                {{ user.email }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Photo de profil : 
+            </td>
+            <td>
+                <img src="{{ asset(user.avatar) }}" alt="{{ user.nom }}" class="avatar">
+            </td>
+        </tr>
+    </table>
+    <div class="d-flex gap-5">
+        <a href="{{ path('app_user_profile_edit')}}" class="btn btn-primary w-50">Editer le profil</a>
+        <a href="" class="btn btn-danger w-50">Supprimer mon compte</a>
+    </div> 
+</div>
+
+{% endblock %}

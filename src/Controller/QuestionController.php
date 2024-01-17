@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class QuestionController extends AbstractController
@@ -48,21 +49,27 @@ class QuestionController extends AbstractController
 
             $this->addFlash('success', "Votre réponse a bien été ajoutée");
 
+            // Si une nouvelle réponse est ajoutée on envoie un mail de confirmation à l'auteur de la question
+            // On n'envoie pas d'email si la réponse est postée par l'autre de la question
+            if ($reponse->getUser() !== $question->getUser()) {
+                $email = (new TemplatedEmail())
+                    ->from(new Address('noReply@faq.com', 'FAQ'))
+                    ->to(new Address($question->getUser()->getEmail(), $question->getUser()->getNom()))
+                    ->subject("Une réponse à votre question vient d'être postée")
+                    ->htmlTemplate('reponse/email.html.twig')
+                    ->context([
+                        'question' => $question,
+                        'url' => $this->generateUrl('app_question_reponses', ['id' => $question->getId()], UrlGeneratorInterface::ABSOLUTE_URL)
+                    ])
+                ;
+                $mailer->send($email);                
+            }
+
+
             // On clone notre objet formulaire vide dans l'objet de départ pour afficher le formulaire vide sur la page après validation
             $form = clone $emptyForm;
 
-            // Si une nouvelle réponse est ajoutée on envoie un mail de confirmation
-            $email = (new TemplatedEmail())
-            ->from(new Address('noReply@faq.com', 'FAQ'))
-            ->to($reponse->getUser()->getEmail())
-            ->subject("Une réponse à votre question vient d'être postée")
-            ->htmlTemplate('reponse/email.html.twig')
-            ->context([
-                'reponse' => $reponse
-            ])
-            ;
 
-            $mailer->send($email);
         }
 
         return $this->render('question/questionReponses.html.twig', [
@@ -74,7 +81,7 @@ class QuestionController extends AbstractController
     /**
      * Poser une question
      */
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('QUESTION_ADD', null, "Veuillez vous connecter pour accéder à cette page")]
     #[Route('/question/add', name: 'app_question_add')]
     public function addQuestion(Request $request): Response
     {
@@ -127,5 +134,4 @@ class QuestionController extends AbstractController
             'formAddQuestion' => $form
         ]);
     }
-
 }

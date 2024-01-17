@@ -62,34 +62,41 @@ class RegistrationFormType extends AbstractType
                     ])
                 ]
             ])
-            ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'mapped' => false, // car plainPassword n'existe pas dans l'entité
-                'label' => 'Mot de passe',
-                'attr' => ['autocomplete' => 'new-password'],
-                'help' => 'Votre mot de passe doit faire au moins 6 caractères',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'Veuillez entrer un mot de passe',
-                    ]),
-                    new Length([
-                        'min' => 6,
-                        'minMessage' => 'Le mot de passe doit contenir au minimum {{ limit }} caractères',
-                        // max length allowed by Symfony for security reasons
-                        'max' => 4096,
-                    ]),
-                ],
-            ])
-            ->add('agreeTerms', CheckboxType::class, [
-                'label' => "j'accepte les conditions générales d'utilisation",
-                'mapped' => false,
-                'constraints' => [
-                    new IsTrue([
-                        'message' => "Vous devez accepter les conditions générales d'utilisation",
-                    ]),
-                ],
-            ])
+        ;
+        // Si la clé "is_profile" est à false, alors il s'agit du formulaire d'inscription, donc on ajoute au formulaire le champs mot de passe et j'accepte les conditions d'utilisation
+        if (!$options['is_profile']) {
+            $builder
+                ->add('plainPassword', PasswordType::class, [
+                    // instead of being set onto the object directly,
+                    // this is read and encoded in the controller
+                    'mapped' => false, // car plainPassword n'existe pas dans l'entité
+                    'label' => 'Mot de passe',
+                    'attr' => ['autocomplete' => 'new-password'],
+                    'help' => 'Votre mot de passe doit faire au moins 6 caractères',
+                    'constraints' => [
+                        new NotBlank([
+                            'message' => 'Veuillez entrer un mot de passe',
+                        ]),
+                        new Length([
+                            'min' => 6,
+                            'minMessage' => 'Le mot de passe doit contenir au minimum {{ limit }} caractères',
+                            // max length allowed by Symfony for security reasons
+                            'max' => 4096,
+                        ]),
+                    ],
+                ])
+                ->add('agreeTerms', CheckboxType::class, [
+                    'label' => "j'accepte les conditions générales d'utilisation",
+                    'mapped' => false,
+                    'constraints' => [
+                        new IsTrue([
+                            'message' => "Vous devez accepter les conditions générales d'utilisation",
+                        ]),
+                    ],
+                ])
+            ;
+        }       
+        $builder         
             ->add('submit', SubmitType::class, [
                 'label' => 'Valider mon inscription',
                 'attr' => [
@@ -97,12 +104,14 @@ class RegistrationFormType extends AbstractType
                 ]
             ])
         ;
+
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'is_profile' => false
         ]);
     }
 }

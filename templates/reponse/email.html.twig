@@ -1,6 +1,11 @@
-<h1>{{ reponse.question.titre }}</h1>
+<h1>Bonjour {{ question.user.nom }} !</h1>
 
-<h3>{{ reponse.user.nom }} a répondu à votre question :</h3>
-<p>{{ reponse.contenu }}</p>
+<h3>{{ question.user.nom }} a répondu à la question : {{ question.titre }}</h3>
 
-Pour accéder à la page, veuillez suivre ce <a href="http://127.0.0.1:8000/question/{{ reponse.question.id }}">lien</a>
+<h5>Réponse : </h5>
+<p>{{ question.contenu }}</p>
+
+Vous pouvez accéder à votre page en suivant ce lien :
+<a href="{{ url }}">{{ question.titre }}</a>
+
+<p>A bientôt sur la FAQ !</p>
