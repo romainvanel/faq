@@ -44,6 +44,11 @@
                             </div>
                         </div>
                         <div class="d-flex gap-2">
+                            {% if (question.user is same as(app.user)) %}
+                                <div>
+                                    <span class="badge text-bg-danger">Votre question</span>
+                                </div>
+                            {% endif %}
                             {% if is_granted('QUESTION_EDIT', question) %}
                                 <div>
                                     <a href="{{ path('app_question_edit', {id: question.id}) }}">
@@ -71,11 +76,7 @@
                     <div>
                         <h4 class="fw-semibold"><a href="{{ path('app_question_reponses', { id: question.id }) }}" class="questionLink">{{ question.titre}}</a></h4>
                         <p>{{ question.contenu|slice(0, 50) }}...</p>
-                        {% if (question.user is same as(app.user)) %}
-                        <div class="d-flex justify-content-end">
-                            <span class="badge text-bg-danger">Votre question</span>
-                        </div>
-                    {% endif %}
+
                     </div>
                 </div>
             </li>

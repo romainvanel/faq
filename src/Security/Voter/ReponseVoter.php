@@ -3,6 +3,7 @@
 namespace App\Security\Voter;
 
 use App\Repository\ReponseRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -15,7 +16,8 @@ class ReponseVoter extends Voter
     public const VOTE = 'REPONSE_VOTE';
 
     public function __construct(
-        private ReponseRepository $reponseRepository
+        private ReponseRepository $reponseRepository,
+        private Security $security
     ) {
     }
 
@@ -35,7 +37,13 @@ class ReponseVoter extends Voter
 
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
-            case self::DELETE:            
+            case self::DELETE:
+                if ($this->security->isGranted('ROLE_ADMIN')){
+                    return true;
+                } else {
+                    return $subject->getUser() === $user;
+                }
+                break;            
             case self::VIEW:            
             case self::EDIT:
                 /**
