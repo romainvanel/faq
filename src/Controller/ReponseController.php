@@ -93,6 +93,7 @@ public function __construct(
     /**
      * On peut vérifier la méthode avec #[Route('/reponse/{id}/vote}', name: 'app_reponse_vote', methods: ['POST'])]. Mais dans ce cas on aura une erreur si on tape directement la route dans l'URL car la méthode get est bloqué. Notre message d'erreur ne s'affichera pas
      */
+    #[IsGranted('REPONSE_VOTE', 'reponse', 'Vous ne pouvez pas voter pour cette réponse')]
     #[Route('/reponse/{id}/vote}', name: 'app_reponse_vote')]
     public function vote(Reponse $reponse, Request $request): RedirectResponse
     {

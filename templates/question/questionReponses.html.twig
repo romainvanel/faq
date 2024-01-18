@@ -101,7 +101,7 @@
                 </div>
 
                 {# Bouton pour voter #}
-                {% if reponse.user is not same as(app.user) and hasVoted is not same as(true) %}
+                {% if is_granted('REPONSE_VOTE', reponse) %}
                 <div>
                     <form
                         action="{{ path('app_reponse_vote', {id: reponse.id}) }}"

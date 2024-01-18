@@ -28,7 +28,7 @@ class QuestionController extends AbstractController
         
     }
     /**
-     * Récupère une seul question et toutes ses réponses et permet d'ajouter une réponse
+     * Récupère une seul question et toutes ses réponses et permet d'ajouter une réponse et un vote
      */
     #[Route('/question/{id}', name: 'app_question_reponses', requirements: ['id' => '\d+'])]
     public function getQuestionReponses(Question $question, Request $request, MailerInterface $mailer, ReponseRepository $reponseRepository): Response
@@ -69,12 +69,6 @@ class QuestionController extends AbstractController
 
             // On clone notre objet formulaire vide dans l'objet de départ pour afficher le formulaire vide sur la page après validation
             $form = clone $emptyForm;
-        }
-
-        // Vérfie si l'utilisateur connecté a déjà voté pour une réponse pour cette question
-        $user = $this->getUser();
-        if ($user !== null) {
-            $hasVoted = $reponseRepository->hasVoted($user, $question);
         }
 
         return $this->render('question/questionReponses.html.twig', [
