@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ReponseRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -30,6 +32,14 @@ class Reponse
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $dateEdition = null;
+
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'votes')]
+    private Collection $voters;
+
+    public function __construct()
+    {
+        $this->voters = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -92,6 +102,33 @@ class Reponse
     public function setDateEdition(?\DateTimeInterface $dateEdition): static
     {
         $this->dateEdition = $dateEdition;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getVoters(): Collection
+    {
+        return $this->voters;
+    }
+
+    public function addVoter(User $voter): static
+    {
+        if (!$this->voters->contains($voter)) {
+            $this->voters->add($voter);
+            $voter->addVote($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVoter(User $voter): static
+    {
+        if ($this->voters->removeElement($voter)) {
+            $voter->removeVote($this);
+        }
 
         return $this;
     }

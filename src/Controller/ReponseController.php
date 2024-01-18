@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Question;
 use App\Entity\Reponse;
+use App\Entity\User;
 use App\Form\ReponseType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -70,7 +72,7 @@ public function __construct(
         $token = $request->request->get('_token');
         $method = $request->request->get('_method');
 
-        if ($method === 'DELETE' && $this->isCsrfTokenValid('reponse_delete', $token)) {
+        if ($method === 'DELETE' && $this->isCsrfTokenValid('reponse_delete-'. $reponse->getId(), $token)) {
             $this->entityManager->remove($reponse);
             $this->entityManager->flush();
 
@@ -78,6 +80,40 @@ public function __construct(
         } else {
             $this->addFlash('error', "Vous ne pouvez pas supprimer cette réponse");
         }
+
+        return $this->redirectToRoute('app_question_reponses', [
+            'id' => $reponse->getQuestion()->getId()
+        ]);
+    }
+
+    /**
+     * Permet à un utilisateur de voter
+     */
+
+    /**
+     * On peut vérifier la méthode avec #[Route('/reponse/{id}/vote}', name: 'app_reponse_vote', methods: ['POST'])]. Mais dans ce cas on aura une erreur si on tape directement la route dans l'URL car la méthode get est bloqué. Notre message d'erreur ne s'affichera pas
+     */
+    #[Route('/reponse/{id}/vote}', name: 'app_reponse_vote')]
+    public function vote(Reponse $reponse, Request $request): RedirectResponse
+    {
+        $token = $request->request->get('_token');
+
+        // On vérifie qu'on a bien une méthode post et si le token est bon
+        if ($request->getMethod() === 'POST' && $this->isCsrfTokenValid('vote-'.$reponse->getId(), $token)) {
+            /** @var User $user */
+            $user = $this->getUser();
+
+            // Associe la réponse à l'utilisateur
+            $user->addVote($reponse);
+
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Votre vote a bien été pris en compte');            
+        } else {
+            $this->addFlash('error', 'Vous avez déjà voté pour cette question');
+        }
+
 
         return $this->redirectToRoute('app_question_reponses', [
             'id' => $reponse->getQuestion()->getId()

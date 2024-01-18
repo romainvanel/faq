@@ -56,6 +56,8 @@
                             {% if reponse.dateEdition is not null %}
                              - Modifié le : {{ reponse.dateEdition|date("d.m.Y à H:i")}}
                             {% endif %}
+                            {# Affiche le nombre de votes #}
+                            - Votes : {{ reponse.voters|length }}
                             </small></p>
                         </div>
                     </div>
@@ -80,7 +82,7 @@
                                     onsubmit="return confirm('La réponse sera supprimée de manière définitive')"
                                 >
                                     <input type="hidden" name="_method" value="DELETE">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('reponse_delete') }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('reponse_delete-'~ reponse.id) }}">
                                     <button type="submit" class="bg-transparent border-0">
                                         <img src="{{ asset('imgs/icone/delete.svg') }}" alt="Suppression" title="Suppression">
                                     </button>
@@ -96,7 +98,24 @@
                             <span class="badge text-bg-danger">Message de l'auteur</span>
                         </div>
                     {% endif %}
-                </div>             
+                </div>
+
+                {# Bouton pour voter #}
+                {% if reponse.user is not same as(app.user) and hasVoted is not same as(true) %}
+                <div>
+                    <form
+                        action="{{ path('app_reponse_vote', {id: reponse.id}) }}"
+                        method="post"
+                    >
+                        <input type="hidden" name="_token" value="{{ csrf_token('vote-'~ reponse.id) }}">
+                        <button type="submit" class="bg-transparent border-0">
+                            <small class="fw-semibold">J'aime !</small>                    
+                            <img src="{{ asset('imgs/icone/like.svg') }}" alt="Bouton Vote" title="Voter">
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
             </div>
         </li>
         {% else %}
