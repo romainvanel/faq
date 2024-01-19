@@ -71,6 +71,19 @@
                                     </form>
                                 </div>
                             {% endif %}
+                            {% if is_granted('USER_ACCESS') %}    
+                                <div>
+                                    <form
+                                        action="{{ path('app_question_report' , {id: question.id, type: 'question'} )}}"
+                                        method="post"    
+                                    >
+                                        <input type="hidden" name="_token" value="{{ csrf_token('report-question-'~ question.id) }}">
+                                        <button type="submit" class="bg-transparent border-0">
+                                            <img src="{{ asset('imgs/icone/report.svg') }}" alt="Signaler" title="Signaler">
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
                         </div>
                    </div>
                     <div>

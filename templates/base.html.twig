@@ -26,11 +26,13 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ path('app_home') }}">Questions</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_admin') }}">
-                                Administration
-                            </a>
-                        </li>  
+                        {% if app.user != null and 'ROLE_ADMIN' in app.user.roles %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_admin') }}">
+                                    Administration
+                                </a>
+                            </li>
+                        {% endif %}  
                     </ul>
                 {% if (app.user == null) %}
                     <ul class="navbar-nav" >

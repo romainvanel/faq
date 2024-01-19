@@ -6,6 +6,7 @@ use App\Entity\Question;
 use App\Entity\Reponse;
 use App\Form\QuestionType;
 use App\Form\ReponseType;
+use App\Repository\QuestionRepository;
 use App\Repository\ReponseRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -22,7 +23,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class QuestionController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private QuestionRepository $questionRepository
     )
     {
         
@@ -181,5 +183,60 @@ class QuestionController extends AbstractController
         }
 
         return $this->redirectToRoute('app_home');
+    }
+
+    #[IsGranted('USER_ACCESS')]
+    #[Route('/{type}/{id}/report', name:'app_question_report', requirements: ['id' => '\d+', 'type' => 'question|reponse'])]
+    public function report(string $type, int $id, MailerInterface $mailer, Request $request, ReponseRepository $reponseRepository): RedirectResponse
+    {
+        if ($type === 'question') {
+            $question = $this->questionRepository->find($id);
+            // Erreur 404
+            if (!$question) {
+                throw $this->createNotFoundException('Pas de question avec cet id');
+            }
+            $questionId = $question->getId();
+        } else {
+            $reponse = $reponseRepository->find($id);
+            // Erreur 404
+            if (!$reponse) {
+                throw $this->createNotFoundException('Pas de reponse avec cet id');
+            }
+            // On récupère l'id de la question pour transmettre dans le retour et rediriger
+            $question = $reponse->getQuestion()->getId();
+        }
+
+        $token = $request->request->get('_token');
+
+        if ($this->isCsrfTokenValid("report-$type-$id", $token)) {
+            /** @var User $user */
+            $user = $this->getUser();
+
+            $email = (new TemplatedEmail())
+                ->from(new Address($user->getEmail(), $user->getNom()))
+                ->to('report@faq.test')
+                ->subject('Signalement FAQ')
+                ->htmlTemplate('/email/reportEmail.html.twig')
+                ->context([
+                    'type' => $type,
+                    'nom' => $user->getNom(),
+                    'url' => $this->generateUrl(
+                        'app_question_reponses', 
+                        ['id' => $questionId], 
+                        UrlGeneratorInterface::ABSOLUTE_URL
+                    )
+                ])
+            ;
+
+            $mailer->send($email);
+
+            $this->addFlash('success', "Votre signalement a bien été transmis");            
+        } else {
+            $this->addFlash('error', 'Signalement impossible');
+        }
+
+        return $this->redirectToRoute('app_question_reponses', [
+            'id' => $questionId
+        ]);
     }
 }
