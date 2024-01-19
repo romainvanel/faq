@@ -3,6 +3,13 @@
 {% block title %}Administration{% endblock %}
 
 {% block body %}
+    {# Message de succès #}
+    {% for messageFlash in app.flashes('success') %}
+        <div class="alert alert-success mt-3">
+            {{messageFlash}}
+        </div>
+    {% endfor %}
+
     <h1 class="mb-3">Liste des utilisateurs</h1>
 
     <table class="table">
@@ -11,7 +18,9 @@
                 <th scope="col">ID</th>
                 <th scope="col">Nom</th>
                 <th scope="col">Avatar</th>
+                <th scope="col">Role<th>
                 <th scope="col">Supprimer Utilisateur</th>
+                <th scope="col">Modifier utilisateur</th>
             </tr>
         </thead>
         <tbody>
@@ -21,6 +30,17 @@
                     <td>{{ user.nom }}</td>
                     <td>
                         <img src="{{ asset(user.avatar) }}" alt="{{ user.nom }}" class="avatar">
+
+                    </td>
+                    <td>
+                        {% for role in user.roles %}
+                            {% if role is same as('ROLE_ADMIN') %}
+                                <span class=" badge rounded-pill text-bg-danger">
+                                    Administrateur
+                                </span>
+                            {% endif %}
+                            <p>{{ role }}</p>
+                        {% endfor %}
 
                     </td>
                     <td>                          
@@ -35,6 +55,12 @@
                                 <img src="{{ asset('imgs/icone/delete.svg') }}" alt="Suppression" title="Suppression">
                             </button>
                         </form>
+                    </td>
+                    <td>
+                        {# Affiche le bouton "Devenir administrateur" si l'utilisateur n'est pas la personne actuellement connecté et que ce même utilisateur ne possède pas de rôle admin ('ROLE_ADMIN') #}
+                        {% if 'ROLE_ADMIN' not in user.roles %}
+                            <a href="{{ path('app_admin_user_role', {id: user.id}) }}">Devenir administrateur</a>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}

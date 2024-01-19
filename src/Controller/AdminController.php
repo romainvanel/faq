@@ -14,9 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ADMIN_ACCESS', null, 'Vous ne pouvez pas accéder à cette page')]
+#[Route('/admin', name: 'app_admin')]
 class AdminController extends AbstractController
 {
-    #[Route('/admin', name: 'app_admin')]
+    #[Route('', name: '')]
     public function index(UserRepository $userRepository): Response
     {
         $users = $userRepository->findby(
@@ -26,6 +27,19 @@ class AdminController extends AbstractController
         return $this->render('admin/index.html.twig', [
             'users' => $users,
         ]);
+    }
+
+    #[Route('/user/{id}/role', name: '_user_role')]
+    public function roleAdmin(User $user, EntityManagerInterface $entityManager): RedirectResponse
+    {
+        $user->setRoles(['ROLE_ADMIN']);
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        $this->addFlash('success', "L'utilisateur {$user->getNom()} est maintenant un administrateur");
+
+        return $this->redirectToRoute('app_admin');
     }
 
     // methode pour supprimer utilisateur sans réutiliser la fonction delete dans le UserController
