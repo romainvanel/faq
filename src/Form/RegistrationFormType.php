@@ -98,7 +98,7 @@ class RegistrationFormType extends AbstractType
         }       
         $builder         
             ->add('submit', SubmitType::class, [
-                'label' => 'Valider mon inscription',
+                'label' => $options['labelButton'],
                 'attr' => [
                     'class' => 'btn btn-primary'
                 ]
@@ -111,7 +111,8 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
-            'is_profile' => false
+            'is_profile' => false,
+            'labelButton' => 'Valider mon inscription'
         ]);
     }
 }

@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class UserVoter extends Voter
 {
     public const ACCESS = 'USER_ACCESS';
+    public const ADMIN = 'ADMIN_ACCESS';
 
     public function __construct(
         private Security $security
@@ -20,7 +21,7 @@ class UserVoter extends Voter
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        if($attribute === self::ACCESS) {
+        if($attribute === self::ACCESS || $attribute === self::ADMIN) {
             return true;
         }
         
@@ -40,6 +41,9 @@ class UserVoter extends Voter
         switch ($attribute) {
             case self::ACCESS:
                 return $this->security->isGranted('ROLE_USER');
+                break;
+            case self::ADMIN:
+                return $this->security->isGranted('ROLE_ADMIN');
                 break;
         }
 

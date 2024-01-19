@@ -143,7 +143,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // Retourne une image par défaut si aucun avatar
         if ($this->avatar === null) {
-            return 'imgs/user_default.png';
+            return 'imgs/user_default.jpg';
         }
         return "avatars/{$this->avatar}";
     }

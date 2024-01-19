@@ -38,11 +38,7 @@ class ReponseVoter extends Voter
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case self::DELETE:
-                if ($this->security->isGranted('ROLE_ADMIN')){
-                    return true;
-                } else {
-                    return $subject->getUser() === $user;
-                }
+                return $subject->getUser() === $user || $this->security->isGranted('ROLE_ADMIN');
                 break;            
             case self::VIEW:            
             case self::EDIT:

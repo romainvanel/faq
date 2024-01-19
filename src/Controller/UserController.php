@@ -45,7 +45,8 @@ class UserController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         $form = $this->createForm(RegistrationFormType::class, $user, [
-            'is_profile' => true
+            'is_profile' => true,
+            'labelButton' => 'Modifier mon profil'
         ]);
         $form->handleRequest($request);
 
@@ -73,8 +74,8 @@ class UserController extends AbstractController
      /**
       * Supprimer un utilisateur
       */
-     #[Route('/user/profile/delete', name: 'app_user_profile_delete')]
-      public function deleteUser(Request $request): RedirectResponse
+     #[Route('/user/profile/delete/{id?}', name: 'app_user_profile_delete')]
+      public function deleteUser(?User $user, Request $request): RedirectResponse
       {
         // Récupération du jeton CSRF du formulaire
         $token = $request->request->get('_token');
@@ -82,29 +83,24 @@ class UserController extends AbstractController
         $method = $request->request->get('_method');
 
         // Vérifie si le nom du token que l'on a choisi dans le formulaire est valide et si la méthode est bien delete (choisi dans le input)
-        if ($method === 'DELETE' && $this->isCsrfTokenValid('delete_user', $token)) {
-        /** @var User $user */
-        $user = $this->getUser();
+        if ($method === 'DELETE' && $this->isValidCSRFToken($user, $token)) {
 
-        // Suppression de la photo
-        $filesystem = new Filesystem();
-        $fileName = $user->getAvatar();
-        if ( $fileName!== null && $fileName !== "default.png") {
-           $filesystem->remove($fileName);
-        }
+            // Si user vaut null on récupère l'utilisateur en cours, sinon récupère l'utilisateur par l'id dans la route
+            /** @var User $user */
+            $user = $user ?? $this->getUser();
 
-        $this->entityManager->remove($user);
-        $this->entityManager->flush();
+            // Suppression de la photo
+            $filesystem = new Filesystem();
+            $fileName = $user->getAvatar();
+            if ( $fileName!== null && $fileName !== "default.png") {
+            $filesystem->remove($fileName);
+            }
 
-        // invalidation de la session utilisateur
-        $session = $request->getSession();
-        $session->invalidate();
-        // et annnule aussi le token de securité associé à la session
-        $this->container->get('security.token_storage')->setToken(null);
+            $this->entityManager->remove($user);
+            $this->entityManager->flush();
 
-        $this->addFlash('success', "Votre compte a bien ête supprimé");
-
-        return $this->redirectToRoute('app_home');
+            // Redirection
+            return $this->redirectIfAdmin($user, $request);
         }
 
         // Retour vers la page de profil si le token CSRF est invalide
@@ -112,4 +108,44 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('app_user_profile');
       }
+
+    /**
+     * Vérifie un jeton lors de la suppresion utilisateur
+     */
+    private function isValidCSRFToken(?User $user, string $token): bool
+    {
+        // Vérifier le jeton CRSF selon si l'on est un admin ou pas
+        if ($user !== null && $this->isGranted('ROLE_ADMIN')) {
+            return $this->isCsrfTokenValid('delete_user-'. $user->getId(), $token);
+        } else {
+            // Vérification si un utilisateur supprime son propre compte
+            return $this->isCsrfTokenValid('delete_user', $token);
+        }
+    }
+
+    /**
+     * redirige l'utilisateur après une suppression de compte selon si il est un administrateur ou simple utilisateur
+     */
+    private function redirectIfAdmin(User $user, Request $request): RedirectResponse
+    {
+        // On récupère l'utilisateur connecté
+        $userConnected = $this->getUser();
+
+        // Redirection pour un utilisateur admin quand il supprime la partie admin
+        if ($user !== $userConnected && $this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('success', "Votre compte a bien ête supprimé");
+            return $this->redirectToRoute('app_admin');
+        }
+
+        // invalidation de la session utilisateur
+        $session = $request->getSession();
+        $session->invalidate();
+
+        // et annnule aussi le token de securité associé à la session
+        $this->container->get('security.token_storage')->setToken(null);
+
+        $this->addFlash('success', "Votre compte a bien ête supprimé");
+
+        return $this->redirectToRoute('app_home');
+    }
 }

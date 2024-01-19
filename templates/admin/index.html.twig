@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration{% endblock %}
+
+{% block body %}
+    <h1 class="mb-3">Liste des utilisateurs</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Avatar</th>
+                <th scope="col">Supprimer Utilisateur</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <th scope="row">{{ user.id }}</th>
+                    <td>{{ user.nom }}</td>
+                    <td>
+                        <img src="{{ asset(user.avatar) }}" alt="{{ user.nom }}" class="avatar">
+
+                    </td>
+                    <td>                          
+                        <form
+                            action="{{ path('app_user_profile_delete', {id: user.id}) }}"
+                            method="post"
+                            onsubmit="return confirm('L\'utlisateur sera supprimé de manière définitive')"
+                        >
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_user-'~ user.id) }}">
+                            <button type="submit" class="bg-transparent border-0">
+                                <img src="{{ asset('imgs/icone/delete.svg') }}" alt="Suppression" title="Suppression">
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
